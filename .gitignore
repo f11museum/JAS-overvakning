@@ -1,0 +1,7 @@
+SDK/*
+*.o
+*.xpl
+*.zip
+target/
+*.gch
+SDK*

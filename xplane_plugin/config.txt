@@ -1,0 +1,8 @@
+# This file uses same input format as the dataref.txt
+# Use tab character and not space to seperate after each type
+# name TAB type TAB writable TAB unit TAB description
+
+mydr/banan/testInt		int		y	unit	Description
+mydr/banan/testFloat	float	y	unit	Description
+
+#Last line, keep this
