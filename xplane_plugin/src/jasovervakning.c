@@ -28,6 +28,9 @@ XPLMDataRef dr_heartbeat_hud;
 
 XPLMDataRef dr_io_vat_lamp_dator;
 XPLMDataRef dr_io_vat_lamp_primdat;
+XPLMDataRef dr_io_vat_lamp_styrsak;
+XPLMDataRef dr_io_vat_lamp_felinfo;
+XPLMDataRef dr_io_vat_lamp_abumod;
 
 int pv_vat = 0;
 int pv_ess = 0;
@@ -83,6 +86,9 @@ PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc) {
     findDataRef("JAS/system/hud/heartbeat", &dr_heartbeat_hud);
     findDataRef("JAS/io/vat/lamp/dator", &dr_io_vat_lamp_dator);
     findDataRef("JAS/io/vat/lamp/primdat", &dr_io_vat_lamp_primdat);
+    findDataRef("JAS/io/vat/lamp/styrsak", &dr_io_vat_lamp_styrsak);
+    findDataRef("JAS/io/vat/lamp/felinfo", &dr_io_vat_lamp_felinfo);
+    findDataRef("JAS/io/vat/lamp/abumod", &dr_io_vat_lamp_abumod);
 
     return 1; //g_window != NULL;
 }
@@ -128,19 +134,42 @@ float MyFlightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinc
     //float elapsed = XPLMGetElapsedTime();
     /* The actual callback.  First we read the sim's time and the data. */
     //XPLMDebugString("jasovervakning: flightloop\n");
-    int res;
-    res = checkHeartBeat(XPLMGetDatai(dr_heartbeat_vat), &pv_vat, &timer_vat);
-    res += checkHeartBeat(XPLMGetDatai(dr_heartbeat_ess), &pv_ess, &timer_ess);
-    res += checkHeartBeat(XPLMGetDatai(dr_heartbeat_logic), &pv_logic, &timer_logic);
-    res += checkHeartBeat(XPLMGetDatai(dr_heartbeat_hud), &pv_hud, &timer_hud);
+    int error = 0;
 
-    if (res > 0) {
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_logic), &pv_logic, &timer_logic) > 0) {
+        XPLMSetDatai(dr_io_vat_lamp_primdat, 1);
+    } else {
+        XPLMSetDatai(dr_io_vat_lamp_primdat, 0);
+    }
+
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_ess), &pv_ess, &timer_ess) > 0) {
+        XPLMSetDatai(dr_io_vat_lamp_styrsak, 1);
+        error++;
+    } else {
+        XPLMSetDatai(dr_io_vat_lamp_styrsak, 0);
+    }
+
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_vat), &pv_vat, &timer_vat) > 0) {
+        XPLMSetDatai(dr_io_vat_lamp_felinfo, 1);
+        error++;
+    } else {
+        XPLMSetDatai(dr_io_vat_lamp_felinfo, 0);
+    }
+
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_hud), &pv_hud, &timer_hud) > 0) {
+        XPLMSetDatai(dr_io_vat_lamp_abumod, 1);
+        error++;
+    } else {
+        XPLMSetDatai(dr_io_vat_lamp_abumod, 0);
+    }
+
+    if (error > 0) {
         XPLMSetDatai(dr_io_vat_lamp_dator, 1);
     } else {
         XPLMSetDatai(dr_io_vat_lamp_dator, 0);
     }
 
-    XPLMSetDatai(dr_io_vat_lamp_primdat, 1);
+    //XPLMSetDatai(dr_io_vat_lamp_primdat, 1);
     /* Return 1.0 to indicate that we want to be called again in 1 second. */
     return 0.1;
 }
