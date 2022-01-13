@@ -25,6 +25,7 @@ XPLMDataRef dr_heartbeat_vat;
 XPLMDataRef dr_heartbeat_ess;
 XPLMDataRef dr_heartbeat_logic;
 XPLMDataRef dr_heartbeat_hud;
+XPLMDataRef dr_heartbeat_mkv;
 
 XPLMDataRef dr_io_vat_lamp_dator;
 XPLMDataRef dr_io_vat_lamp_primdat;
@@ -36,11 +37,13 @@ int pv_vat = 0;
 int pv_ess = 0;
 int pv_logic = 0;
 int pv_hud = 0;
+int pv_mkv = 0;
 
 int timer_vat = 0;
 int timer_ess = 0;
 int timer_logic = 0;
 int timer_hud = 0;
+int timer_mkv = 0;
 
 int findDataRef(const char* name, XPLMDataRef* result) {
     *result = XPLMFindDataRef(name);
@@ -84,6 +87,7 @@ PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc) {
     findDataRef("JAS/system/ess/heartbeat", &dr_heartbeat_ess);
     findDataRef("JAS/system/logic/heartbeat", &dr_heartbeat_logic);
     findDataRef("JAS/system/hud/heartbeat", &dr_heartbeat_hud);
+    findDataRef("JAS/system/mkv/heartbeat", &dr_heartbeat_mkv);
     findDataRef("JAS/io/vat/lamp/dator", &dr_io_vat_lamp_dator);
     findDataRef("JAS/io/vat/lamp/primdat", &dr_io_vat_lamp_primdat);
     findDataRef("JAS/io/vat/lamp/styrsak", &dr_io_vat_lamp_styrsak);
@@ -161,6 +165,11 @@ float MyFlightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinc
         error++;
     } else {
         XPLMSetDatai(dr_io_vat_lamp_abumod, 0);
+    }
+
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_mkv), &pv_mkv, &timer_mkv) > 0) {
+
+        error++;
     }
 
     if (error > 0) {
