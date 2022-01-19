@@ -26,24 +26,28 @@ XPLMDataRef dr_heartbeat_ess;
 XPLMDataRef dr_heartbeat_logic;
 XPLMDataRef dr_heartbeat_hud;
 XPLMDataRef dr_heartbeat_mkv;
+XPLMDataRef dr_heartbeat_pratorn;
 
 XPLMDataRef dr_io_vat_lamp_dator;
 XPLMDataRef dr_io_vat_lamp_primdat;
 XPLMDataRef dr_io_vat_lamp_styrsak;
 XPLMDataRef dr_io_vat_lamp_felinfo;
 XPLMDataRef dr_io_vat_lamp_abumod;
+XPLMDataRef dr_io_vat_lamp_oxykab;
 
 int pv_vat = 0;
 int pv_ess = 0;
 int pv_logic = 0;
 int pv_hud = 0;
 int pv_mkv = 0;
+int pv_pratorn = 0;
 
 int timer_vat = 0;
 int timer_ess = 0;
 int timer_logic = 0;
 int timer_hud = 0;
 int timer_mkv = 0;
+int timer_pratorn = 0;
 
 int findDataRef(const char* name, XPLMDataRef* result) {
     *result = XPLMFindDataRef(name);
@@ -88,11 +92,14 @@ PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc) {
     findDataRef("JAS/system/logic/heartbeat", &dr_heartbeat_logic);
     findDataRef("JAS/system/hud/heartbeat", &dr_heartbeat_hud);
     findDataRef("JAS/system/mkv/heartbeat", &dr_heartbeat_mkv);
+    findDataRef("JAS/system/pratorn/heartbeat", &dr_heartbeat_pratorn);
+
     findDataRef("JAS/io/vat/lamp/dator", &dr_io_vat_lamp_dator);
     findDataRef("JAS/io/vat/lamp/primdat", &dr_io_vat_lamp_primdat);
     findDataRef("JAS/io/vat/lamp/styrsak", &dr_io_vat_lamp_styrsak);
     findDataRef("JAS/io/vat/lamp/felinfo", &dr_io_vat_lamp_felinfo);
     findDataRef("JAS/io/vat/lamp/abumod", &dr_io_vat_lamp_abumod);
+    findDataRef("JAS/io/vat/lamp/oxykab", &dr_io_vat_lamp_oxykab);
 
     return 1; //g_window != NULL;
 }
@@ -165,6 +172,13 @@ float MyFlightLoopCallback(float inElapsedSinceLastCall, float inElapsedTimeSinc
         error++;
     } else {
         XPLMSetDatai(dr_io_vat_lamp_abumod, 0);
+    }
+
+    if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_pratorn), &pv_pratorn, &timer_pratorn) > 0) {
+        XPLMSetDatai(dr_io_vat_lamp_oxykab, 1);
+        error++;
+    } else {
+        XPLMSetDatai(dr_io_vat_lamp_oxykab, 0);
     }
 
     if (checkHeartBeat(XPLMGetDatai(dr_heartbeat_mkv), &pv_mkv, &timer_mkv) > 0) {
