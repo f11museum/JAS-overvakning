@@ -87,12 +87,12 @@ PLUGIN_API int XPluginStart(char* outName, char* outSig, char* outDesc) {
                                    1.0,                  /* Interval */
                                    NULL);                /* refcon not used. */
 
-    findDataRef("JAS/system/vat/heartbeat", &dr_heartbeat_vat);
+    findDataRef("JAS/heartbeat/vat", &dr_heartbeat_vat);
     findDataRef("JAS/system/ess/heartbeat", &dr_heartbeat_ess);
     findDataRef("JAS/system/logic/heartbeat", &dr_heartbeat_logic);
     findDataRef("JAS/system/hud/heartbeat", &dr_heartbeat_hud);
     findDataRef("JAS/system/mkv/heartbeat", &dr_heartbeat_mkv);
-    findDataRef("JAS/system/pratorn/heartbeat", &dr_heartbeat_pratorn);
+    findDataRef("JAS/heartbeat/pratorn", &dr_heartbeat_pratorn);
 
     findDataRef("JAS/io/vat/lamp/dator", &dr_io_vat_lamp_dator);
     findDataRef("JAS/io/vat/lamp/primdat", &dr_io_vat_lamp_primdat);
